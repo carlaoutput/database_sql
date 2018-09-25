@@ -1,0 +1,35 @@
+1)	Find the addresses of all houses currently listed. 
+
+  SELECT H.address FROM House H INNER JOIN Property P ON H.address = P.address;
+
+2)	Find the addresses and MLS numbers of all houses currently listed. 
+
+  SELECT L.address, L.mlsNumber FROM Listings L INNER JOIN House H ON L.address = H.address;
+
+3)	Find the addresses of all 3-becroom, 2-bathroom houses currently listed. 
+
+  SELECT L.address FROM Listings L INNER JOIN House H ON L.address = H.address WHERE H.bedrooms = 3 AND H.bathrooms = 2;
+
+4)	Find the addresses and prices of all 3-bedroom, 2-bathroom houses with prices in the range $100,000 to $250,000, with the results shown in descending order of price. 
+
+  SELECT P.address, P.price FROM Property P INNER JOIN House H ON P.address = H.address WHERE H.bedrooms = 3 AND H.bathrooms = 2 AND P.price >= 100000 AND P.price <= 250000 ORDER BY price DESC;
+
+5)	Find the addresses and prices of all business properties that are advertised as office space in descending order of price. 
+
+  SELECT P.address, P.price FROM Property P INNER JOIN BusinessProperty BP ON P.address = BP.address WHERE BP.type LIKE '%office space%' ORDER BY P.price DESC;
+
+6)	Find all the ids, names and phones of all agents, together with the names of their firms and the dates when they started. 
+
+  SELECT A.agentId, A.name, A.phone, F.name AS FirmName, A.dateStarted FROM Agent A INNER JOIN Firm F ON A.firmId = F.id;
+
+7)	Find all the properties currently listed by agent with id “001” (or some other suitable id). 
+
+  SELECT P.* FROM Property P INNER JOIN Listings L ON P.address = L.address WHERE L.agentId = 100;
+
+8) Find the names of all agents, and for each agent all buyers currently working with that agent. 
+
+  SELECT A.name AS AgentName, B.* FROM Works_With WW INNER JOIN Buyer B ON WW.buyerId = B.id INNER JOIN Agent A ON WW.agentId = A.agentId ORDER BY A.name, B.name;
+
+9)	For some buyer that is interested in a house, where the buyer is identified by an id (e.g., “001”), find all houses that meet the buyer’s preferences, with the results shown in descending order of price.
+
+  SELECT P.address,P.ownerName,P.price,H.bedrooms,H.bathrooms,H.size FROM House H INNER JOIN Property P ON H.address = P.address INNER JOIN Buyer B ON P.price >= B.minimumPreferredPrice AND P.price <= B.maximumPreferredPrice AND B.bathrooms = H.bathrooms AND B.bedrooms = H.bedrooms WHERE B.id = 10005 AND B.propertyType = "Home" ORDER BY P.price DESC;
