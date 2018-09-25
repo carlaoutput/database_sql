@@ -1,0 +1,130 @@
+1)
+
+mysql> SELECT H.address FROM House H INNER JOIN Property P ON H.address = P.address;
++--------------------+
+| address            |
++--------------------+
+| 1010 Johnny Way    |
+| 12 3rd St          |
+| 554 Left St        |
+| 5600 Jefferson Ave |
+| 767 Frank Rd       |
++--------------------+
+5 rows in set (0.00 sec)
+
+
+
+2)
+
+mysql> SELECT L.address, L.mlsNumber FROM Listings L INNER JOIN House H ON L.address = H.address;
++--------------------+-----------+
+| address            | mlsNumber |
++--------------------+-----------+
+| 12 3rd St          |      1000 |
+| 767 Frank Rd       |      1003 |
+| 5600 Jefferson Ave |      1004 |
+| 1010 Johnny Way    |      1005 |
+| 554 Left St        |      1006 |
++--------------------+-----------+
+5 rows in set (0.00 sec)
+
+
+3)
+
+mysql> SELECT L.address FROM Listings L INNER JOIN House H ON L.address = H.address WHERE H.bedrooms = 3 AND H.bathrooms = 2;
++-----------------+
+| address         |
++-----------------+
+| 12 3rd St       |
+| 767 Frank Rd    |
+| 1010 Johnny Way |
++-----------------+
+3 rows in set (0.00 sec)
+
+
+
+
+4)
+
+mysql> SELECT P.address, P.price FROM Property P INNER JOIN House H ON P.address = H.address WHERE H.bedrooms = 3 AND H.bathrooms = 2 AND P.price >= 100000 AND P.price <= 250000 ORDER BY price DESC;
++-----------------+--------+
+| address         | price  |
++-----------------+--------+
+| 767 Frank Rd    | 200000 |
+| 1010 Johnny Way | 110000 |
+| 12 3rd St       | 100000 |
++-----------------+--------+
+3 rows in set (0.00 sec)
+
+
+5)
+
+mysql> SELECT P.address, P.price FROM Property P INNER JOIN BusinessProperty BP ON P.address = BP.address WHERE BP.type LIKE '%office space%' ORDER BY P.price DESC;
++-----------------------------+--------+
+| address                     | price  |
++-----------------------------+--------+
+| 501 N Duval St              | 250000 |
+| 1800 Miccosukkee Commons Dr | 120000 |
++-----------------------------+--------+
+2 rows in set (0.00 sec)
+
+
+6)
+
+mysql> SELECT A.agentId, A.name, A.phone, F.name AS FirmName, A.dateStarted FROM Agent A INNER JOIN Firm F ON A.firmId = F.id;
++---------+-------------+--------------+---------------------+-------------+
+| agentId | name        | phone        | FirmName            | dateStarted |
++---------+-------------+--------------+---------------------+-------------+
+|     100 | Big Bob     | 850-777-1234 | Bob's Real Estate   | 2000-01-01  |
+|     101 | Gary Gordon | 866-144-4141 | Buy From Us         | 1990-04-23  |
+|     102 | Roger Ebert | 555-555-5555 | Homes For Less      | 2003-08-11  |
+|     103 | Ted Tally   | 644-155-9999 | Tallahassee Estates | 2010-05-05  |
+|     104 | Homie Homes | 777-123-4567 | Holmes Homes        | 2016-01-04  |
++---------+-------------+--------------+---------------------+-------------+
+5 rows in set (0.00 sec)
+
+
+7)
+
+mysql> SELECT P.* FROM Property P INNER JOIN Listings L ON P.address = L.address WHERE L.agentId = 100;
++-----------------+----------------+--------+
+| address         | ownerName      | price  |
++-----------------+----------------+--------+
+| 12 3rd St       | John Johnson   | 100000 |
+| 1010 Johnny Way | Brent McFatter | 110000 |
++-----------------+----------------+--------+
+2 rows in set (0.00 sec)
+
+
+8)
+
+mysql> SELECT A.name AS AgentName, B.* FROM Works_With WW INNER JOIN Buyer B ON WW.buyerId = B.id INNER JOIN Agent A ON WW.agentId = A.agentId ORDER BY A.name, B.name;
++-------------+-------+------------------+--------------+--------------+----------+-----------+----------------------+-----------------------+-----------------------+
+| AgentName   | id    | name             | phone        | propertyType | bedrooms | bathrooms | businessPropertyType | minimumPreferredPrice | maximumPreferredPrice |
++-------------+-------+------------------+--------------+--------------+----------+-----------+----------------------+-----------------------+-----------------------+
+| Big Bob     | 10001 | Albert Zimmerman | 850-444-0404 | Home         |        2 |         1 | LLC                  |                 10000 |                 80000 |
+| Big Bob     | 10005 | Eddy Edward      | 369-234-4545 | Home         |        3 |         2 | LLC                  |                 25000 |                150000 |
+| Gary Gordon | 10002 | Biggie Smalls    | 904-333-3939 | Business     |        3 |         4 | Corporation          |                 50000 |                300000 |
+| Homie Homes | 10003 | Charlie Wade     | 305-450-5050 | Home         |        4 |         2 | LLC                  |                 25000 |                100000 |
+| Homie Homes | 10005 | Eddy Edward      | 369-234-4545 | Home         |        3 |         2 | LLC                  |                 25000 |                150000 |
+| Roger Ebert | 10001 | Albert Zimmerman | 850-444-0404 | Home         |        2 |         1 | LLC                  |                 10000 |                 80000 |
+| Roger Ebert | 10003 | Charlie Wade     | 305-450-5050 | Home         |        4 |         2 | LLC                  |                 25000 |                100000 |
+| Ted Tally   | 10004 | Daniel York      | 250-430-4585 | Business     |        3 |         3 | Corporation          |                 30000 |                200000 |
++-------------+-------+------------------+--------------+--------------+----------+-----------+----------------------+-----------------------+-----------------------+
+8 rows in set (0.00 sec)
+
+
+9)
+
+mysql> SELECT P.address,P.ownerName,P.price,H.bedrooms,H.bathrooms,H.size FROM House H INNER JOIN Property P ON H.address = P.address INNER JOIN Buyer B ON P.price >= B.minimumPreferredPrice AND P.price <= B.maximumPreferredPrice AND B.bathrooms = H.bathrooms AND B.bedrooms = H.bedrooms WHERE B.id = 10005 AND B.propertyType = "Home" ORDER BY P.price DESC;
++-----------------+----------------+--------+----------+-----------+-------+
+| address         | ownerName      | price  | bedrooms | bathrooms | size  |
++-----------------+----------------+--------+----------+-----------+-------+
+| 1010 Johnny Way | Brent McFatter | 110000 |        3 |         2 | 25000 |
+| 12 3rd St       | John Johnson   | 100000 |        3 |         2 | 50000 |
++-----------------+----------------+--------+----------+-----------+-------+
+2 rows in set (0.00 sec)
+
+
+
+
